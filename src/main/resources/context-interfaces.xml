@@ -32,7 +32,7 @@
         <property name="parseFailureDirectory" value="/tmp/failed"/>
         <property name="applicationEvents" ref="applicationEvents"/>
     </bean>
-
+  
     <!-- RMI exposed booking service facade, which operates in an open Hibernate session -->
 
     <bean id="hibernateInterceptor" class="org.springframework.orm.hibernate4.support.OpenSessionInterceptor">
@@ -56,13 +56,10 @@
 
     <!-- Tracking web application support -->
 
-
-    <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
-        <property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>
-        <property name="prefix" value="/WEB-INF/jsp/pub/"/>
-        <property name="suffix" value=".jsp"/>
-        <property name="requestContextAttribute" value="rc"/>
-        <property name="cache" value="false"/>
+    <bean class="se.citerus.dddsample.interfaces.tracking.CargoTrackingController">
+        <property name="cargoRepository" ref="cargoRepository"/>
+        <property name="handlingEventRepository" ref="handlingEventRepository"/>
+        <property name="messageSource" ref="messageSource"/>
     </bean>
 
     <bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
@@ -73,9 +70,12 @@
         <property name="defaultLocale" value="en"/>
     </bean>
 
-    <bean id="openSessionInViewInterceptor"
-          class="org.springframework.orm.hibernate4.support.OpenSessionInViewInterceptor">
-        <property name="sessionFactory" ref="sessionFactory"/>
-    </bean>
+    <mvc:interceptors>
+        <bean id="openSessionInViewInterceptor" class="org.springframework.orm.hibernate4.support.OpenSessionInViewInterceptor">
+            <property name="sessionFactory" ref="sessionFactory"/>
+        </bean>
+    </mvc:interceptors>
+
+    <mvc:annotation-driven/>
 
 </beans>
